@@ -1,0 +1,10 @@
+modaddr 0x01100000
+
+entry    genode
+kernel   /home/sebastian/tmp/build/genode-focnados_zybo/kernel/fiasco.oc/fiasco -serial_esc 
+roottask genode/core
+module   genode/config
+module   genode/init
+module   genode/timer
+module   genode/memtrace_drv
+module   genode/fpga
