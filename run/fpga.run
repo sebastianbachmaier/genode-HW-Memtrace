@@ -1,0 +1,43 @@
+#
+# Build
+#
+
+build { core init drivers/timer drivers/memtrace fpga }
+
+create_boot_directory
+
+install_config {
+<config>
+	<parent-provides>
+		<service name="LOG"/>
+		<service name="RM"/>
+		<service name="IO_MEM"/>
+		<service name="ROM"/>
+		<service name="CPU"/>
+	</parent-provides>
+	<default-route>
+		<any-service> <parent/> <any-child/> </any-service>
+	</default-route>
+	<start name="memtrace_drv">
+		<resource name="RAM" quantum="2M"/>
+		<provides><service name="Memtrace"/></provides>
+	</start>
+	<start name="timer">
+		<resource name="RAM" quantum="1M"/>
+		<provides><service name="Timer"/></provides>
+	</start>
+	<start name="fpga">
+		<resource name="RAM" quantum="200M"/>
+	</start>
+</config>
+}
+
+#
+# Boot image
+#
+
+build_boot_image { core init timer memtrace_drv fpga }
+
+append qemu_args " -nographic -smp 4"
+
+run_genode_until {child "fpga" exited with exit value .*\n} 40
